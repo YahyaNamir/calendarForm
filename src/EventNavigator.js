@@ -26,7 +26,7 @@ export default function EventNavigator() {
 
 const styles = StyleSheet.create({
   text: {
-    // fontSize: 24,
+    fontSize: 24,
     color: 'black',
     fontFamily: 'Poppins-Bold',
   },
