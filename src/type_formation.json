@@ -1,0 +1,102 @@
+[
+  {
+    "label": "Centre de perfectionnement",
+    "type": "centre_perfectionnement",
+    "element": "club",
+    "icon": null,
+    "color": "rgb(66 66 66)",
+    "value": null,
+    "lieu": null,
+    "note": null
+  },
+  {
+    "label": "Cours spécialisés des entraîneurs des jeunes",
+    "type": "cours_entraineurs_jeunes",
+    "element": "club",
+    "icon": null,
+    "color": "rgb(64 212 198)",
+    "value": null,
+    "lieu": null,
+    "note": null
+  },
+  {
+    "label": "Détection des joueurs",
+    "type": "detection_joueurs",
+    "element": "club",
+    "icon": null,
+    "color": "rgb(23 120 139)",
+    "value": null,
+    "lieu": null,
+    "note": null
+  },
+  {
+    "label": "Développement ou entraînement des joueurs",
+    "type": "dev_entrainement_joueurs",
+    "element": "club",
+    "icon": null,
+    "color": "rgb(117 41 122)",
+    "value": null,
+    "lieu": null,
+    "note": null
+  },
+  {
+    "label": "Déplacement",
+    "type": "deplacement",
+    "element": "deplacement",
+    "icon": null,
+    "color": "rgb(40, 154, 240)",
+    "value": null,
+    "lieu": null,
+    "note": null
+  },
+  {
+    "label": "Formation",
+    "type": "formation",
+    "element": "formation",
+    "icon": null,
+    "color": "rgb(195 116 44)",
+    "value": null,
+    "lieu": null,
+    "note": null
+  },
+  {
+    "label": "Observation des joueurs",
+    "type": "observation_joueurs",
+    "element": "club",
+    "icon": null,
+    "color": "#A81C40",
+    "value": null,
+    "lieu": null,
+    "note": null
+  },
+  {
+    "label": "Observer un match",
+    "type": "observer_match",
+    "element": "club",
+    "icon": null,
+    "color": "rgb(35 55 106)",
+    "value": null,
+    "lieu": null,
+    "note": null
+  },
+  {
+    "label": "Visite d'accompagnement d'un club",
+    "type": "visite_club",
+    "element": "club",
+    "icon": null,
+    "color": "rgb(10 133 75)",
+    "value": null,
+    "lieu": null,
+    "note": null
+  },
+  {
+    "label": "Visite d'une ligue régionale",
+    "type": "visite_ligue_regionale",
+    "element": "ligue",
+    "icon": null,
+    "color": "rgb(133 186 207)",
+    "value": null,
+    "lieu": null,
+    "note": null
+  }
+]

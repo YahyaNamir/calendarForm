@@ -23,13 +23,12 @@ export default function App() {
             headerTitleAlign: 'center',
           }}
         />
-
         <Stack.Screen
-          name="Collectif"
-          component={Collectif}
+          name="Personelle"
+          component={Personelle}
           options={{
             headerShown: true,
-            headerTitle: 'Collectif',
+            headerTitle: 'Personelle',
             headerStyle: {backgroundColor: '#006536'},
             headerTintColor: '#fff',
             headerTitleStyle: {fontSize: 16, fontFamily: 'Poppins-Bold'},
@@ -37,11 +36,11 @@ export default function App() {
           }}
         />
         <Stack.Screen
-          name="Personelle"
-          component={Personelle}
+          name="Collectif"
+          component={Collectif}
           options={{
             headerShown: true,
-            headerTitle: 'Personelle',
+            headerTitle: 'Collectif',
             headerStyle: {backgroundColor: '#006536'},
             headerTintColor: '#fff',
             headerTitleStyle: {fontSize: 16, fontFamily: 'Poppins-Bold'},

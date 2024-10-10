@@ -1,0 +1,77 @@
+[
+  {
+    "id": 1,
+    "value": "Analyse vidéo",
+    "color": "rgba(84, 112, 198, 0.5)"
+  },
+  {
+    "id": 2,
+    "value": "Formation",
+    "color": "rgba(115, 192, 222, 0.5)"
+  },
+  {
+    "id": 3,
+    "value": "Futsal",
+    "color": "rgba(132, 94, 194, 0.5)"
+  },
+  {
+    "id": 4,
+    "value": "Gardiens de but",
+    "color": "rgba(146, 108, 0, 0.5)"
+  },
+  {
+    "id": 5,
+    "value": "Médical",
+    "color": "rgba(255, 128, 102, 0.5)"
+  },
+  {
+    "id": 6,
+    "value": "Préparateurs physiques",
+    "color": "rgba(168, 28, 64, 0.5)"
+  },
+  {
+    "id": 7,
+    "value": "Scouting",
+    "color": "rgba(23 ,120 ,139 ,0.5)"
+  },
+  {
+    "id": 8,
+    "value": "Administratif",
+    "color": "rgba(145, 204, 117, 0.5)"
+  },
+  {
+    "id": 9,
+    "value": "Beach Soccer",
+    "color": "rgba(250, 200, 88, 0.5)"
+  },
+  {
+    "id": 10,
+    "value": "Équipe national",
+    "color": "rgba(195, 74, 54, 0.5)"
+  },
+  {
+    "id": 11,
+    "value": "Entrainment",
+    "color": "rgba(30,76,41 ,0.5)"
+  },
+  {
+    "id": 12,
+    "value": "Data science",
+    "color": "rgb(40, 154, 240, 0.5)"
+  },
+  {
+    "id": 13,
+    "value": "Bureau",
+    "color": "rgba(250, 200, 88, 0.5)"
+  },
+  {
+    "id": 14,
+    "value": "Jours de recuperation",
+    "color": "rgba(165, 42, 42, 0.5)"
+  },
+  {
+    "id": 15,
+    "value": "Congés",
+    "color": "rgba(128, 0, 128, 0.5)"
+  }
+]
