@@ -160,7 +160,7 @@ export default function Personelle() {
             return (
               <>
                 <Button
-                  title={f.label}
+                  // title={f.label}
                   onPress={() => setIsCollapsed(!isCollapsed)}
                 />
                 <Collapsible collapsed={isCollapsed}>
