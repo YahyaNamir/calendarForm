@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   TextInput,
   ScrollView,
+  Alert,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {Picker} from '@react-native-picker/picker';
@@ -158,14 +159,18 @@ export default function Personelle() {
   };
 
   const handleSubmit = () => {
-    // console.log(formData.dateDebut);
-    // console.log(formData.dateFin);
-    // console.log(formData.planning);
-    // console.log(formData.thematique);
-    // formData.types.forEach((typeObj, index) => {
-    //   console.log(`Type ${index + 1}:`, typeObj);
-    // });
-    console.log(formData);
+    console.log(formData.dateDebut);
+    console.log(formData.dateFin);
+    console.log(formData.planning);
+    console.log(formData.thematique);
+    formData.types.forEach((typeObj, index) => {
+      console.log(`Type ${index + 1}:`, typeObj);
+    });
+    Alert.alert('Form Submitted!');
+    // console.log(formData);
+    setTimeout(() => {
+      navigation.navigate('Evenement');
+    }, 10);
   };
 
   return (

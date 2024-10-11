@@ -32,12 +32,6 @@ export default function EventNavigator() {
 }
 
 const styles = StyleSheet.create({
-  // text: {
-  //   marginBottom: 15,
-  //   fontSize: 20,
-  //   color: 'black',
-  //   fontFamily: 'Poppins-Bold',
-  // },
   icon: {
     marginRight: 10,
     color: '#0e9b49',
