@@ -17,17 +17,27 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import Collapsible from 'react-native-collapsible';
 import thematique from '../thematique.json';
 import formation from '../type_formation.json';
+import axios from 'axios';
 
 export default function Personelle() {
   const navigation = useNavigation();
   const [thematiqueOptions, setThematiqueOptions] = useState([]);
+  const [collapsedSections, setCollapsedSections] = useState([]);
 
   const [formData, setFormData] = useState({
     planning: '',
     thematique: '',
     dateDebut: new Date(),
     dateFin: new Date(),
+    types: formation.map(f => ({
+      type: f.type,
+      lieu: null,
+      note: null,
+      value: null,
+      color: f.color,
+    })),
   });
+
   useEffect(() => {
     const fetchThematiqueData = async () => {
       try {
@@ -45,8 +55,6 @@ export default function Personelle() {
     fetchThematiqueData();
   }, []);
 
-  const [isCollapsed, setIsCollapsed] = useState(true);
-
   const [datePickers, setDatePickers] = useState([
     {
       id: 1,
@@ -57,18 +65,24 @@ export default function Personelle() {
     {id: 2, label: 'Date fin*', showPicker: false, icon_name: 'calendar-end'},
   ]);
 
-  const handleInputChange = (field, value) => {
-    setFormData(prevState => ({
-      ...prevState,
-      [field]: value,
-    }));
+  const handleInputChange = (field, value, index = null) => {
+    if (index !== null) {
+      const updatedTypes = formData.types.map((item, idx) =>
+        idx === index ? {...item, [field]: value} : item,
+      );
+      setFormData({...formData, types: updatedTypes});
+    } else {
+      setFormData({...formData, [field]: value});
+    }
   };
 
   const handleDateChange = (index, event, selectedDate) => {
     const currentDate = selectedDate || new Date();
-    const updatedField = index === 0 ? 'dateDebut' : 'dateFin';
-
-    handleInputChange(updatedField, currentDate);
+    if (index === 0) {
+      setFormData({...formData, dateDebut: currentDate});
+    } else {
+      setFormData({...formData, dateFin: currentDate});
+    }
 
     setDatePickers(prevState => {
       const updatedPickers = [...prevState];
@@ -86,7 +100,9 @@ export default function Personelle() {
   };
 
   const handleSubmit = () => {
-    console.log('Form Data:', formData);
+    formData.types.forEach((typeObj, index) => {
+      console.log(`Type ${index + 1}:`, typeObj);
+    });
   };
 
   return (
@@ -104,7 +120,7 @@ export default function Personelle() {
             numberOfLines={2}
             style={styles.textPlan}
             value={formData.planning}
-            onChangeText={text => handleInputChange('planning', text)}
+            onChangeText={text => setFormData({...formData, planning: text})}
           />
         </View>
 
@@ -116,7 +132,8 @@ export default function Personelle() {
             selectedValue={formData.thematique}
             onValueChange={itemValue =>
               handleInputChange('thematique', itemValue)
-            }>
+            }
+            onChangeText={text => setFormData({...formData, pole: text})}>
             {thematique.map(th => (
               <Picker.Item
                 style={styles.textPicker}
@@ -156,25 +173,62 @@ export default function Personelle() {
         ))}
 
         <View style={{marginTop: 15}}>
-          {formation.map(f => {
+          {formation.map((f, index) => {
             return (
-              <>
-                <Button
-                  title={f.label}
-                  onPress={() => setIsCollapsed(!isCollapsed)}
-                />
-                <Collapsible collapsed={isCollapsed}>
-                  <View style={styles.collapsibleContent}>
-                    <Text style={styles.labelCollapse}>Club</Text>
+              <View key={index}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setCollapsedSections(prevState =>
+                      prevState.includes(index)
+                        ? prevState.filter(i => i !== index)
+                        : [...prevState, index],
+                    );
+                  }}
+                  style={[
+                    styles.buttonCollapse,
+                    {
+                      backgroundColor:
+                        formData.types[index]?.color || '#d4f9e3d7',
+                      flex: 1,
+                    },
+                  ]}>
+                  <Icon name="radio-button-on" size={18} color="white" />
+                  <Text style={styles.buttonText}>{f.label}</Text>
+                </TouchableOpacity>
 
+                <Collapsible collapsed={!collapsedSections.includes(index)}>
+                  <View style={[styles.collapsibleContent]}>
+                    <Text style={styles.labelCollapse}>{f.element}</Text>
                     <View style={styles.planContainer}>
                       <Icon1 name="soccer" size={20} style={styles.icon} />
-                      <TextInput
+                      {/* <TextInput
                         placeholder="Club"
                         multiline
                         numberOfLines={2}
+                        value={formData.types[index]?.value || ''}
+                        onChangeText={text =>
+                        handleInputChange('value', text, index)
+                        }
                         style={styles.textPlan}
-                      />
+                      /> */}
+                      <Picker
+                        style={styles.picker}
+                        selectedValue={formData.thematique}
+                        onValueChange={itemValue =>
+                          handleInputChange('thematique', itemValue)
+                        }
+                        onChangeText={text =>
+                          handleInputChange('club', text, index)
+                        }>
+                        {thematique.map(th => (
+                          <Picker.Item
+                            style={styles.textPicker}
+                            label={th.value}
+                            value={th.id}
+                            key={th.id}
+                          />
+                        ))}
+                      </Picker>
                     </View>
 
                     <Text style={styles.labelCollapse}>Lieu</Text>
@@ -184,6 +238,10 @@ export default function Personelle() {
                         placeholder="Lieu"
                         multiline
                         numberOfLines={2}
+                        value={formData.types[index]?.lieu || ''}
+                        onChangeText={text =>
+                          handleInputChange('lieu', text, index)
+                        }
                         style={styles.textPlan}
                       />
                     </View>
@@ -195,12 +253,16 @@ export default function Personelle() {
                         placeholder="Note"
                         multiline
                         numberOfLines={2}
+                        value={formData.types[index]?.note || ''}
+                        onChangeText={text =>
+                          handleInputChange('note', text, index)
+                        }
                         style={styles.textPlan}
                       />
                     </View>
                   </View>
                 </Collapsible>
-              </>
+              </View>
             );
           })}
         </View>
@@ -232,12 +294,31 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#eaf9f0b4',
   },
+  // scrollContainer: {},
   label: {
     fontSize: 16,
     marginBottom: 10,
     marginTop: 15,
     color: 'black',
     fontFamily: 'Poppins-Bold',
+  },
+  buttonCollapse: {
+    fontSize: 16,
+    padding: 10,
+    textAlign: 'left',
+    borderRadius: 5,
+    fontFamily: 'Poppins-Bold',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  buttonText: {
+    color: '#fff',
+    fontSize: 15,
+    padding: 2,
+    fontFamily: 'Poppins-Bold',
+    textAlign: 'left',
+    marginLeft: 15,
   },
 
   textPicker: {
@@ -255,12 +336,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 50,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontFamily: 'Poppins-Bold',
-    textAlign: 'center',
   },
 
   inputContainer: {
