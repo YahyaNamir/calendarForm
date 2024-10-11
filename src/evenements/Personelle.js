@@ -14,17 +14,22 @@ import {Picker} from '@react-native-picker/picker';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Icon1 from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icon2 from 'react-native-vector-icons/AntDesign';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Collapsible from 'react-native-collapsible';
 import thematique from '../thematique.json';
-import formation from '../type_formation.json';
+import type_formation from '../type_formation.json';
 import clubs from '../clubs.json';
+import formations from '../formations.json';
+import leagues from '../leagues.json';
 import axios from 'axios';
 
 export default function Personelle() {
   const navigation = useNavigation();
   const [thematiqueOptions, setThematiqueOptions] = useState([]);
   const [clubOptions, setClubOptions] = useState([]);
+  const [formation, setFormationOption] = useState([]);
+  const [league, setLeagueOption] = useState([]);
   const [collapsedSections, setCollapsedSections] = useState([]);
 
   const [formData, setFormData] = useState({
@@ -32,7 +37,7 @@ export default function Personelle() {
     thematique: '',
     dateDebut: new Date(),
     dateFin: new Date(),
-    types: formation.map(f => ({
+    types: type_formation.map(f => ({
       type: f.type,
       lieu: null,
       note: null,
@@ -73,6 +78,39 @@ export default function Personelle() {
     };
 
     fetchClubData();
+  }, []);
+
+  useEffect(() => {
+    const fetchFormationData = async () => {
+      try {
+        const data = await new Promise(resolve => {
+          setTimeout(() => {
+            resolve(formations);
+          }, 1000);
+        });
+        setFormationOption(data);
+      } catch (error) {
+        console.error('Error fetching formations data:', error);
+      }
+    };
+
+    fetchFormationData();
+  }, []);
+  useEffect(() => {
+    const fetchFormationData = async () => {
+      try {
+        const data = await new Promise(resolve => {
+          setTimeout(() => {
+            resolve(leagues);
+          }, 1000);
+        });
+        setLeagueOption(data);
+      } catch (error) {
+        console.error('Error fetching leagues data:', error);
+      }
+    };
+
+    fetchFormationData();
   }, []);
 
   const [datePickers, setDatePickers] = useState([
@@ -120,27 +158,28 @@ export default function Personelle() {
   };
 
   const handleSubmit = () => {
-    console.log(formData.dateDebut);
-    console.log(formData.dateFin);
-    console.log(formData.planning);
-    console.log(formData.thematique);
-    formData.types.forEach((typeObj, index) => {
-      console.log(`Type ${index + 1}:`, typeObj);
-    });
+    // console.log(formData.dateDebut);
+    // console.log(formData.dateFin);
+    // console.log(formData.planning);
+    // console.log(formData.thematique);
+    // formData.types.forEach((typeObj, index) => {
+    //   console.log(`Type ${index + 1}:`, typeObj);
+    // });
+    console.log(formData);
   };
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
         <View style={styles.row}>
-          <Icon2 name="pluscircle" size={25} style={styles.icon} />
+          <FontAwesome name="user-circle" size={28} style={styles.icon} />
           <Text style={styles.text}>Personelle Événement</Text>
         </View>
 
         <Text style={styles.label}>Planning*</Text>
 
         <View style={styles.planContainer}>
-          <Icon name="next-plan" size={20} style={styles.icon} />
+          <Icon name="next-plan" size={25} style={styles.icon} />
           <TextInput
             placeholder="Planning..."
             multiline
@@ -153,7 +192,7 @@ export default function Personelle() {
 
         <Text style={styles.label}>Thématique*</Text>
         <View style={styles.inputContainer}>
-          <Icon name="label" size={20} style={styles.icon} />
+          <Icon name="label" size={25} style={styles.icon} />
           <Picker
             style={styles.picker}
             selectedValue={formData.thematique}
@@ -179,7 +218,7 @@ export default function Personelle() {
             <TouchableOpacity
               style={styles.datePickerButton}
               onPress={() => toggleDatePicker(index)}>
-              <Icon1 name={picker.icon_name} size={20} style={styles.icon} />
+              <Icon1 name={picker.icon_name} size={25} style={styles.icon} />
 
               <Text style={styles.dateInput}>
                 {index === 0
@@ -201,7 +240,7 @@ export default function Personelle() {
         ))}
 
         <View style={{marginTop: 15}}>
-          {formation.map((f, index) => {
+          {type_formation.map((f, index) => {
             return (
               <View key={index}>
                 <TouchableOpacity
@@ -226,29 +265,81 @@ export default function Personelle() {
 
                 <Collapsible collapsed={!collapsedSections.includes(index)}>
                   <View style={[styles.collapsibleContent]}>
-                    <Text style={styles.labelCollapse}>{f.element}</Text>
-                    <View style={styles.planContainer}>
-                      <Icon1 name="soccer" size={20} style={styles.icon} />
-                      <Picker
-                        style={styles.picker}
-                        selectedValue={formData.types[index]?.value}
-                        onValueChange={itemValue => {
-                          handleInputChange('value', itemValue, index);
-                        }}>
-                        {clubOptions.map(cl => (
-                          <Picker.Item
-                            style={styles.textPicker}
-                            label={cl.name}
-                            value={cl.id}
-                            key={cl.id}
-                          />
-                        ))}
-                      </Picker>
-                    </View>
+                    {f.element === 'club' ? (
+                      <>
+                        <Text style={styles.labelCollapse}>{f.element}</Text>
+                        <View style={styles.planContainer}>
+                          <Icon1 name="soccer" size={25} style={styles.icon} />
+                          <Picker
+                            style={styles.picker}
+                            selectedValue={formData.types[index]?.value}
+                            onValueChange={itemValue => {
+                              handleInputChange('value', itemValue, index);
+                            }}>
+                            {clubOptions.map(cl => (
+                              <Picker.Item
+                                style={styles.textPicker}
+                                label={cl.name}
+                                value={cl.id}
+                                key={cl.id}
+                              />
+                            ))}
+                          </Picker>
+                        </View>
+                      </>
+                    ) : f.element === 'formation' ? (
+                      <>
+                        <Text style={styles.labelCollapse}>{f.element}</Text>
+                        <View style={styles.planContainer}>
+                          <Icon1 name="soccer" size={25} style={styles.icon} />
+                          <Picker
+                            style={styles.picker}
+                            selectedValue={formData.types[index]?.value}
+                            onValueChange={itemValue => {
+                              handleInputChange('value', itemValue, index);
+                            }}>
+                            {formations.map(fm => (
+                              <Picker.Item
+                                style={styles.textPicker}
+                                label={fm.value}
+                                value={fm.id}
+                                key={fm.id}
+                              />
+                            ))}
+                          </Picker>
+                        </View>
+                      </>
+                    ) : f.element === 'ligue' ? (
+                      <>
+                        <Text style={styles.labelCollapse}>{f.element}</Text>
+                        <View style={styles.planContainer}>
+                          <Icon1 name="soccer" size={25} style={styles.icon} />
+                          <Picker
+                            style={styles.picker}
+                            selectedValue={formData.types[index]?.value}
+                            onValueChange={itemValue => {
+                              handleInputChange('value', itemValue, index);
+                            }}>
+                            {leagues.map(lg => (
+                              <Picker.Item
+                                style={styles.textPicker}
+                                label={lg.label}
+                                value={lg.id}
+                                key={lg.id}
+                              />
+                            ))}
+                          </Picker>
+                        </View>
+                      </>
+                    ) : f.element === 'formation' ? (
+                      <></>
+                    ) : (
+                      <></>
+                    )}
 
                     <Text style={styles.labelCollapse}>Lieu</Text>
                     <View style={styles.planContainer}>
-                      <Icon name="place" size={20} style={styles.icon} />
+                      <Icon name="place" size={25} style={styles.icon} />
                       <TextInput
                         placeholder="Lieu"
                         multiline
@@ -263,7 +354,7 @@ export default function Personelle() {
 
                     <Text style={styles.labelCollapse}>Note</Text>
                     <View style={styles.planContainer}>
-                      <Icon1 name="note" size={20} style={styles.icon} />
+                      <Icon1 name="note" size={25} style={styles.icon} />
                       <TextInput
                         placeholder="Note"
                         multiline
