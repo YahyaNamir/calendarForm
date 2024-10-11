@@ -134,7 +134,7 @@ export default function Personelle() {
       <View style={styles.container}>
         <View style={styles.row}>
           <Icon2 name="pluscircle" size={25} style={styles.icon} />
-          <Text style={styles.text}>Ajouter un Événement</Text>
+          <Text style={styles.text}>Personelle Événement</Text>
         </View>
 
         <Text style={styles.label}>Planning*</Text>
@@ -308,7 +308,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 5,
     borderRadius: 3,
-    shadowColor: '#302e2e48',
+    shadowColor: '#19722b61',
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 2,

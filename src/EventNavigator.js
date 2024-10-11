@@ -3,14 +3,17 @@ import {View, Text, TouchableOpacity, StyleSheet, Button} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon1 from 'react-native-vector-icons/Ionicons';
+import Icon2 from 'react-native-vector-icons/AntDesign';
 
 export default function EventNavigator() {
   const navigation = useNavigation();
 
   return (
     <View style={{padding: 20}}>
-      <Text style={styles.text}>Ajouter un evenement :</Text>
-
+      <View style={styles.row}>
+        <Icon2 name="pluscircle" size={25} style={styles.icon} />
+        <Text style={styles.text}>Ajouter un Événement</Text>
+      </View>
       <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate('Personelle')}>
@@ -29,11 +32,35 @@ export default function EventNavigator() {
 }
 
 const styles = StyleSheet.create({
+  // text: {
+  //   marginBottom: 15,
+  //   fontSize: 20,
+  //   color: 'black',
+  //   fontFamily: 'Poppins-Bold',
+  // },
+  icon: {
+    marginRight: 10,
+    color: '#0e9b49',
+  },
   text: {
-    marginBottom: 15,
     fontSize: 20,
-    color: 'black',
     fontFamily: 'Poppins-Bold',
+    color: 'black',
+    textAlign: 'center',
+    marginLeft: 15,
+  },
+  row: {
+    padding: 10,
+    marginBottom: 5,
+    borderRadius: 3,
+    shadowColor: '#19722b61',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   container: {
     flex: 1,
