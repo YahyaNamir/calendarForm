@@ -13,15 +13,18 @@ import {useNavigation} from '@react-navigation/native';
 import {Picker} from '@react-native-picker/picker';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Icon1 from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon2 from 'react-native-vector-icons/AntDesign';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Collapsible from 'react-native-collapsible';
 import thematique from '../thematique.json';
 import formation from '../type_formation.json';
+import clubs from '../clubs.json';
 import axios from 'axios';
 
 export default function Personelle() {
   const navigation = useNavigation();
   const [thematiqueOptions, setThematiqueOptions] = useState([]);
+  const [clubOptions, setClubOptions] = useState([]);
   const [collapsedSections, setCollapsedSections] = useState([]);
 
   const [formData, setFormData] = useState({
@@ -53,6 +56,23 @@ export default function Personelle() {
     };
 
     fetchThematiqueData();
+  }, []);
+
+  useEffect(() => {
+    const fetchClubData = async () => {
+      try {
+        const data = await new Promise(resolve => {
+          setTimeout(() => {
+            resolve(clubs);
+          }, 1000);
+        });
+        setClubOptions(data);
+      } catch (error) {
+        console.error('Error fetching club data:', error);
+      }
+    };
+
+    fetchClubData();
   }, []);
 
   const [datePickers, setDatePickers] = useState([
@@ -100,6 +120,10 @@ export default function Personelle() {
   };
 
   const handleSubmit = () => {
+    console.log(formData.dateDebut);
+    console.log(formData.dateFin);
+    console.log(formData.planning);
+    console.log(formData.thematique);
     formData.types.forEach((typeObj, index) => {
       console.log(`Type ${index + 1}:`, typeObj);
     });
@@ -108,7 +132,10 @@ export default function Personelle() {
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
-        <Text style={styles.text}>Ajouter un Événement</Text>
+        <View style={styles.row}>
+          <Icon2 name="pluscircle" size={25} style={styles.icon} />
+          <Text style={styles.text}>Ajouter un Événement</Text>
+        </View>
 
         <Text style={styles.label}>Planning*</Text>
 
@@ -133,7 +160,8 @@ export default function Personelle() {
             onValueChange={itemValue =>
               handleInputChange('thematique', itemValue)
             }
-            onChangeText={text => setFormData({...formData, pole: text})}>
+            // onChangeText={text => setFormData({...formData, pole: text})}
+          >
             {thematique.map(th => (
               <Picker.Item
                 style={styles.textPicker}
@@ -201,31 +229,18 @@ export default function Personelle() {
                     <Text style={styles.labelCollapse}>{f.element}</Text>
                     <View style={styles.planContainer}>
                       <Icon1 name="soccer" size={20} style={styles.icon} />
-                      {/* <TextInput
-                        placeholder="Club"
-                        multiline
-                        numberOfLines={2}
-                        value={formData.types[index]?.value || ''}
-                        onChangeText={text =>
-                        handleInputChange('value', text, index)
-                        }
-                        style={styles.textPlan}
-                      /> */}
                       <Picker
                         style={styles.picker}
-                        selectedValue={formData.thematique}
-                        onValueChange={itemValue =>
-                          handleInputChange('thematique', itemValue)
-                        }
-                        onChangeText={text =>
-                          handleInputChange('club', text, index)
-                        }>
-                        {thematique.map(th => (
+                        selectedValue={formData.types[index]?.value}
+                        onValueChange={itemValue => {
+                          handleInputChange('value', itemValue, index);
+                        }}>
+                        {clubOptions.map(cl => (
                           <Picker.Item
                             style={styles.textPicker}
-                            label={th.value}
-                            value={th.id}
-                            key={th.id}
+                            label={cl.name}
+                            value={cl.id}
+                            key={cl.id}
                           />
                         ))}
                       </Picker>
@@ -286,7 +301,21 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontFamily: 'Poppins-Bold',
     color: 'black',
+    textAlign: 'center',
+    marginLeft: 15,
+  },
+  row: {
+    padding: 10,
     marginBottom: 5,
+    borderRadius: 3,
+    shadowColor: '#302e2e48',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 
   container: {
@@ -349,11 +378,6 @@ const styles = StyleSheet.create({
     borderColor: '#CCC',
     borderWidth: 1,
     paddingHorizontal: 10,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
   },
   picker: {
     flex: 1,
@@ -409,6 +433,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   textPlan: {
+    fontFamily: 'Poppins-Regular',
     flex: 1,
     height: '100%',
     paddingHorizontal: 5,
@@ -432,7 +457,6 @@ const styles = StyleSheet.create({
     elevation: 2,
     justifyContent: 'space-between',
   },
-
   dateInput: {
     flex: 1,
     fontSize: 16,
