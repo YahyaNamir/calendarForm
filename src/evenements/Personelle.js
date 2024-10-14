@@ -429,7 +429,9 @@ export default function Personelle() {
                       </>
                     ) : f.element === 'ligue' ? (
                       <>
-                        <Text style={styles.labelCollapse}>{t(f.element.toUpperCase())}</Text>
+                        <Text style={styles.labelCollapse}>
+                          {t(f.element.toUpperCase())}
+                        </Text>
                         <View style={styles.rowContainer}>
                           <View
                             style={[
@@ -513,8 +515,8 @@ export default function Personelle() {
                       <Icon1 name="note" size={25} style={styles.icon} />
                       <TextInput
                         placeholder="Note"
-                        multiline
-                        numberOfLines={2}
+                        numberOfLines={10}
+                        multiline={true}
                         value={formData.types[index]?.note || ''}
                         onChangeText={text =>
                           handleInputChange('note', text, index)
