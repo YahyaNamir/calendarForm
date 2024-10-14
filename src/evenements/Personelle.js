@@ -18,7 +18,7 @@ import Icon2 from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Collapsible from 'react-native-collapsible';
-import thematique from '../thematique.json';
+import pole from '../thematique.json';
 import type_formation from '../type_formation.json';
 import clubs from '../clubs.json';
 import formations from '../formations.json';
@@ -34,9 +34,11 @@ export default function Personelle() {
   const [league, setLeagueOption] = useState([]);
   const [collapsedSections, setCollapsedSections] = useState([]);
 
+  const [showOtherInput, setShowOtherInput] = useState(false);
+
   const [formData, setFormData] = useState({
     planning: '',
-    thematique: '',
+    pole: '',
     dateDebut: new Date(),
     dateFin: new Date(),
     types: type_formation.map(f => ({
@@ -45,6 +47,8 @@ export default function Personelle() {
       note: null,
       value: null,
       color: f.color,
+      otherValue: '',
+      isOther: false,
     })),
   });
 
@@ -53,12 +57,12 @@ export default function Personelle() {
       try {
         const data = await new Promise(resolve => {
           setTimeout(() => {
-            resolve(thematique);
+            resolve(pole);
           }, 1000);
         });
         setThematiqueOptions(data);
       } catch (error) {
-        console.error('Error fetching thematique data:', error);
+        console.error('Error fetching pole data:', error);
       }
     };
 
@@ -99,7 +103,7 @@ export default function Personelle() {
     fetchFormationData();
   }, []);
   useEffect(() => {
-    const fetchFormationData = async () => {
+    const fetchLeagueData = async () => {
       try {
         const data = await new Promise(resolve => {
           setTimeout(() => {
@@ -112,7 +116,7 @@ export default function Personelle() {
       }
     };
 
-    fetchFormationData();
+    fetchLeagueData();
   }, []);
 
   const {t} = useTranslation();
@@ -132,23 +136,38 @@ export default function Personelle() {
     },
   ]);
 
-  const handleInputChange = (field, value, index = null) => {
+  const handleInputChange = (
+    field,
+    value,
+    index = null,
+    isOtherValue = false,
+  ) => {
     if (index !== null) {
-      const updatedTypes = formData.types.map((item, idx) =>
-        idx === index ? {...item, [field]: value} : item,
-      );
+      const updatedTypes = formData.types.map((item, idx) => {
+        if (idx === index) {
+          if (isOtherValue) {
+            return {...item, otherValue: value};
+          } else {
+            const isOtherSelected = value === 'other';
+            return {...item, [field]: value, isOther: isOtherSelected};
+          }
+        }
+        return item;
+      });
       setFormData({...formData, types: updatedTypes});
     } else {
       setFormData({...formData, [field]: value});
     }
   };
 
-  const handleDateChange = (index, event, selectedDate) => {
-    const currentDate = selectedDate || new Date();
-    if (index === 0) {
-      setFormData({...formData, dateDebut: currentDate});
-    } else {
-      setFormData({...formData, dateFin: currentDate});
+  const handleDateChange = (index, selectedDate) => {
+    if (selectedDate) {
+      const currentDate = selectedDate || new Date();
+      if (index === 0) {
+        setFormData({...formData, dateDebut: currentDate});
+      } else {
+        setFormData({...formData, dateFin: currentDate});
+      }
     }
 
     setDatePickers(prevState => {
@@ -167,15 +186,9 @@ export default function Personelle() {
   };
 
   const handleSubmit = () => {
-    console.log(formData.dateDebut);
-    console.log(formData.dateFin);
-    console.log(formData.planning);
-    console.log(formData.thematique);
-    formData.types.forEach((typeObj, index) => {
-      console.log(`Type ${index + 1}:`, typeObj);
-    });
+    console.log(JSON.stringify(formData, null, 2));
+
     Alert.alert('Form Submitted!');
-    // console.log(formData);
     setTimeout(() => {
       navigation.navigate('Evenement');
     }, 10);
@@ -208,13 +221,9 @@ export default function Personelle() {
           <Icon name="label" size={25} style={styles.icon} />
           <Picker
             style={styles.picker}
-            selectedValue={formData.thematique}
-            onValueChange={itemValue =>
-              handleInputChange('thematique', itemValue)
-            }
-            // onChangeText={text => setFormData({...formData, pole: text})}
-          >
-            {thematique.map(th => (
+            selectedValue={formData.pole}
+            onValueChange={itemValue => handleInputChange('pole', itemValue)}>
+            {pole.map(th => (
               <Picker.Item
                 style={styles.textPicker}
                 label={th.value}
@@ -235,8 +244,12 @@ export default function Personelle() {
 
               <Text style={styles.dateInput}>
                 {index === 0
-                  ? formData.dateDebut.toDateString()
-                  : formData.dateFin.toDateString()}
+                  ? formData.dateDebut
+                    ? formData.dateDebut.toDateString()
+                    : ''
+                  : formData.dateFin
+                  ? formData.dateFin.toDateString()
+                  : ''}
               </Text>
             </TouchableOpacity>
 
@@ -246,7 +259,17 @@ export default function Personelle() {
                 mode="date"
                 display="default"
                 value={index === 0 ? formData.dateDebut : formData.dateFin}
-                onChange={(event, date) => handleDateChange(index, event, date)}
+                onChange={(event, date) => {
+                  if (event.type === 'set') {
+                    handleDateChange(index, date);
+                  } else if (event.type === 'dismissed') {
+                    setDatePickers(prevState => {
+                      const updatedPickers = [...prevState];
+                      updatedPickers[index].showPicker = false;
+                      return updatedPickers;
+                    });
+                  }
+                }}
               />
             )}
           </View>
@@ -273,79 +296,199 @@ export default function Personelle() {
                     },
                   ]}>
                   <Icon name="radio-button-on" size={18} color="white" />
-                  <Text style={styles.buttonText}>{f.label}</Text>
+                  <Text style={styles.buttonText}>{t(f.label)}</Text>
                 </TouchableOpacity>
 
                 <Collapsible collapsed={!collapsedSections.includes(index)}>
                   <View style={[styles.collapsibleContent]}>
                     {f.element === 'club' ? (
                       <>
-                        <Text style={styles.labelCollapse}>Club</Text>
-                        <View style={styles.planContainer}>
-                          <Icon1 name="soccer" size={25} style={styles.icon} />
-                          <Picker
-                            style={styles.picker}
-                            selectedValue={formData.types[index]?.value}
-                            onValueChange={itemValue => {
-                              handleInputChange('value', itemValue, index);
-                            }}>
-                            {clubOptions.map(cl => (
-                              <Picker.Item
-                                style={styles.textPicker}
-                                label={cl.name}
-                                value={cl.id}
-                                key={cl.id}
+                        <Text style={styles.labelCollapse}>
+                          {t(f.element.toUpperCase())}
+                        </Text>
+                        <View style={styles.rowContainer}>
+                          <View
+                            style={[
+                              styles.planContainer,
+                              formData.types[index]?.value === 'other'
+                                ? styles.halfWidth
+                                : styles.fullWidth,
+                            ]}>
+                            <Icon1
+                              name="soccer"
+                              size={25}
+                              style={styles.icon}
+                            />
+                            <Picker
+                              style={styles.picker}
+                              selectedValue={formData.types[index]?.value}
+                              onValueChange={itemValue => {
+                                handleInputChange('value', itemValue, index);
+                                if (itemValue === 'other') {
+                                  setShowOtherInput(true);
+                                } else {
+                                  setShowOtherInput(false);
+                                }
+                              }}>
+                              {clubOptions.map(cl => (
+                                <Picker.Item
+                                  style={styles.textPicker}
+                                  label={cl.name}
+                                  value={cl.id}
+                                  key={cl.id}
+                                />
+                              ))}
+                              <Picker.Item label="Other" value="other" />
+                            </Picker>
+                          </View>
+
+                          {formData.types[index]?.value === 'other' && (
+                            <View
+                              style={[
+                                styles.planContainerCola,
+                                styles.halfWidth,
+                              ]}>
+                              <TextInput
+                                style={styles.textPlan}
+                                placeholder="Other..."
+                                value={formData.types[index]?.otherValue}
+                                onChangeText={text => {
+                                  handleInputChange(
+                                    'otherValue',
+                                    text,
+                                    index,
+                                    true,
+                                  );
+                                }}
                               />
-                            ))}
-                          </Picker>
+                            </View>
+                          )}
                         </View>
                       </>
                     ) : f.element === 'formation' ? (
                       <>
                         <Text style={styles.labelCollapse}>{f.label}</Text>
-                        <View style={styles.planContainer}>
-                          <Icon1 name="soccer" size={25} style={styles.icon} />
-                          <Picker
-                            style={styles.picker}
-                            selectedValue={formData.types[index]?.value}
-                            onValueChange={itemValue => {
-                              handleInputChange('value', itemValue, index);
-                            }}>
-                            {formations.map(fm => (
-                              <Picker.Item
-                                style={styles.textPicker}
-                                label={fm.value}
-                                value={fm.id}
-                                key={fm.id}
+                        <View style={styles.otherContainer}>
+                          <View
+                            style={[
+                              styles.planContainer,
+                              formData.types[index]?.value === 'other'
+                                ? styles.halfWidth
+                                : styles.fullWidth,
+                            ]}>
+                            <Icon1
+                              name="soccer"
+                              size={25}
+                              style={styles.icon}
+                            />
+                            <Picker
+                              style={styles.picker}
+                              selectedValue={formData.types[index]?.value}
+                              onValueChange={itemValue => {
+                                handleInputChange('value', itemValue, index);
+                                if (itemValue === 'other') {
+                                  setShowOtherInput(true);
+                                } else {
+                                  setShowOtherInput(false);
+                                }
+                              }}>
+                              {formations.map(fm => (
+                                <Picker.Item
+                                  style={styles.textPicker}
+                                  label={fm.value}
+                                  value={fm.id}
+                                  key={fm.id}
+                                />
+                              ))}
+                              <Picker.Item label="Other" value="other" />
+                            </Picker>
+                          </View>
+
+                          {formData.types[index]?.value === 'other' && (
+                            <View
+                              style={[
+                                styles.planContainerCola,
+                                styles.halfWidth,
+                              ]}>
+                              <TextInput
+                                style={styles.textPlan}
+                                placeholder="Other ..."
+                                value={formData.types[index]?.otherValue}
+                                onChangeText={text => {
+                                  handleInputChange(
+                                    'otherValue',
+                                    text,
+                                    index,
+                                    true,
+                                  );
+                                }}
                               />
-                            ))}
-                          </Picker>
+                            </View>
+                          )}
                         </View>
                       </>
                     ) : f.element === 'ligue' ? (
                       <>
-                        <Text style={styles.labelCollapse}>{f.element}</Text>
-                        <View style={styles.planContainer}>
-                          <Icon1 name="soccer" size={25} style={styles.icon} />
-                          <Picker
-                            style={styles.picker}
-                            selectedValue={formData.types[index]?.value}
-                            onValueChange={itemValue => {
-                              handleInputChange('value', itemValue, index);
-                            }}>
-                            {leagues.map(lg => (
-                              <Picker.Item
-                                style={styles.textPicker}
-                                label={lg.label}
-                                value={lg.id}
-                                key={lg.id}
+                        <Text style={styles.labelCollapse}>{t(f.element.toUpperCase())}</Text>
+                        <View style={styles.rowContainer}>
+                          <View
+                            style={[
+                              styles.planContainer,
+                              formData.types[index]?.value === 'other'
+                                ? styles.halfWidth
+                                : styles.fullWidth,
+                            ]}>
+                            <Icon1
+                              name="soccer"
+                              size={25}
+                              style={styles.icon}
+                            />
+                            <Picker
+                              style={styles.picker}
+                              selectedValue={formData.types[index]?.value}
+                              onValueChange={itemValue => {
+                                handleInputChange('value', itemValue, index);
+                                if (itemValue === 'other') {
+                                  setShowOtherInput(true);
+                                } else {
+                                  setShowOtherInput(false);
+                                }
+                              }}>
+                              {leagues.map(lg => (
+                                <Picker.Item
+                                  style={styles.textPicker}
+                                  label={lg.label}
+                                  value={lg.id}
+                                  key={lg.id}
+                                />
+                              ))}
+                              <Picker.Item label="Other" value="other" />
+                            </Picker>
+                          </View>
+
+                          {formData.types[index]?.value === 'other' && (
+                            <View
+                              style={[
+                                styles.planContainerCola,
+                                styles.halfWidth,
+                              ]}>
+                              <TextInput
+                                style={styles.textPlan}
+                                placeholder="Other ..."
+                                value={formData.types[index]?.otherValue}
+                                onChangeText={text => {
+                                  handleInputChange(
+                                    'otherValue',
+                                    text,
+                                    index,
+                                    true,
+                                  );
+                                }}
                               />
-                            ))}
-                          </Picker>
+                            </View>
+                          )}
                         </View>
                       </>
-                    ) : f.element === 'formation' ? (
-                      <></>
                     ) : (
                       <></>
                     )}
@@ -427,7 +570,6 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#eaf9f0b4',
   },
-  // scrollContainer: {},
   label: {
     fontSize: 16,
     marginBottom: 10,
@@ -518,12 +660,17 @@ const styles = StyleSheet.create({
     color: 'black',
     fontFamily: 'Poppins-Bold',
   },
-
+  rowContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+  },
   planContainer: {
     display: 'flex',
     flexDirection: 'row',
     height: 50,
-    width: '100%',
     backgroundColor: '#fff',
     borderRadius: 8,
     borderColor: '#CCC',
@@ -535,6 +682,23 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
     alignItems: 'center',
+  },
+  planContainerCola: {
+    display: 'flex',
+    flexDirection: 'row',
+    height: 50,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    borderColor: '#CCC',
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    alignItems: 'center',
+  },
+  halfWidth: {
+    width: '50%',
+  },
+  fullWidth: {
+    width: '100%',
   },
   textPlan: {
     fontFamily: 'Poppins-Regular',
