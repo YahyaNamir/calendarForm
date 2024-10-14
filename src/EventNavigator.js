@@ -4,28 +4,30 @@ import {useNavigation} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon1 from 'react-native-vector-icons/Ionicons';
 import Icon2 from 'react-native-vector-icons/AntDesign';
+import {useTranslation} from 'react-i18next';
 
 export default function EventNavigator() {
   const navigation = useNavigation();
+  const {t} = useTranslation();
 
   return (
     <View style={{padding: 20}}>
       <View style={styles.row}>
         <Icon2 name="pluscircle" size={25} style={styles.icon} />
-        <Text style={styles.text}>Ajouter un Événement</Text>
+        <Text style={styles.text}>{t('ADD_EVENT')}</Text>
       </View>
       <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate('Personelle')}>
         <Icon name="user-circle" size={30} color="#ffffff" />
-        <Text style={styles.buttonText}>Personelle</Text>
+        <Text style={styles.buttonText}>{t('PERSONAL')}</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate('Collectif')}>
         <Icon1 name="people-circle-sharp" size={30} color="#ffffff" />
-        <Text style={styles.buttonText}>Collectif</Text>
+        <Text style={styles.buttonText}>{t('COLLECTIVE')}</Text>
       </TouchableOpacity>
     </View>
   );

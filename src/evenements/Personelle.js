@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useTransition} from 'react';
 import {
   View,
   Text,
@@ -24,6 +24,7 @@ import clubs from '../clubs.json';
 import formations from '../formations.json';
 import leagues from '../leagues.json';
 import axios from 'axios';
+import {useTranslation} from 'react-i18next';
 
 export default function Personelle() {
   const navigation = useNavigation();
@@ -114,14 +115,21 @@ export default function Personelle() {
     fetchFormationData();
   }, []);
 
+  const {t} = useTranslation();
+
   const [datePickers, setDatePickers] = useState([
     {
       id: 1,
-      label: 'Date debut*',
+      label: t('START_DATE'),
       showPicker: false,
       icon_name: 'calendar-start',
     },
-    {id: 2, label: 'Date fin*', showPicker: false, icon_name: 'calendar-end'},
+    {
+      id: 2,
+      label: t('END_DATE'),
+      showPicker: false,
+      icon_name: 'calendar-end',
+    },
   ]);
 
   const handleInputChange = (field, value, index = null) => {
@@ -178,15 +186,15 @@ export default function Personelle() {
       <View style={styles.container}>
         <View style={styles.row}>
           <FontAwesome name="user-circle" size={28} style={styles.icon} />
-          <Text style={styles.text}>Personelle Événement</Text>
+          <Text style={styles.text}>{t('PERSONAL_EVENT')}</Text>
         </View>
 
-        <Text style={styles.label}>Planning*</Text>
+        <Text style={styles.label}>{`${t('SCHEDULE')}*`}</Text>
 
         <View style={styles.planContainer}>
           <Icon name="next-plan" size={25} style={styles.icon} />
           <TextInput
-            placeholder="Planning..."
+            placeholder={`${t('SCHEDULE')}...`}
             multiline
             numberOfLines={2}
             style={styles.textPlan}
@@ -195,7 +203,7 @@ export default function Personelle() {
           />
         </View>
 
-        <Text style={styles.label}>Thématique*</Text>
+        <Text style={styles.label}>{`${t('THEME')}*`}</Text>
         <View style={styles.inputContainer}>
           <Icon name="label" size={25} style={styles.icon} />
           <Picker
@@ -272,7 +280,7 @@ export default function Personelle() {
                   <View style={[styles.collapsibleContent]}>
                     {f.element === 'club' ? (
                       <>
-                        <Text style={styles.labelCollapse}>{f.element}</Text>
+                        <Text style={styles.labelCollapse}>Club</Text>
                         <View style={styles.planContainer}>
                           <Icon1 name="soccer" size={25} style={styles.icon} />
                           <Picker
@@ -294,7 +302,7 @@ export default function Personelle() {
                       </>
                     ) : f.element === 'formation' ? (
                       <>
-                        <Text style={styles.labelCollapse}>{f.element}</Text>
+                        <Text style={styles.labelCollapse}>{f.label}</Text>
                         <View style={styles.planContainer}>
                           <Icon1 name="soccer" size={25} style={styles.icon} />
                           <Picker

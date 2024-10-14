@@ -1,0 +1,14 @@
+{
+  "ADD_EVENT": "Ajouter un Événement",
+  "PERSONAL": "Personelle",
+  "COLLECTIVE": "Collectif",
+  "START_DATE": "Date début",
+  "END_DATE": "Date fin",
+  "PERSONAL_EVENT": "Événement Personelle",
+  "SCHEDULE": "Planning",
+  "THEME": "Thématique",
+  "CLUB": "Club",
+  "LOCATION": "Lieu",
+  "NOTE": "Note",
+  "SUBMIT": "Submit"
+}
