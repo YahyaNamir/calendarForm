@@ -56,7 +56,7 @@ export default function Personelle() {
       note: null,
       value: null,
       color: f.color,
-      value_autre: '',
+      value_autre: null,
       isOther: false,
     })),
   });
@@ -380,21 +380,7 @@ export default function Personelle() {
                       </>
                     ) : f.element === 'formation' ? (
                       <>
-                        <Text style={styles.labelCollapse}>
-                          {t(f.element.toUpperCase())}
-                        </Text>
                         <View style={styles.otherContainer}>
-                          {formData.types[index]?.value !==
-                            'other'(
-                              <TextInput
-                                placeholder={t('SEARCH')}
-                                value={searchQueries[index] || ''}
-                                onChangeText={text =>
-                                  handleSearchChange(text, index)
-                                }
-                                style={styles.searchInput}
-                              />,
-                            )}
                           <View style={styles.rowContainer}>
                             <View
                               style={[styles.planContainer, styles.fullWidth]}>
@@ -438,19 +424,6 @@ export default function Personelle() {
                       </>
                     ) : f.element === 'ligue' ? (
                       <>
-                        <Text style={styles.labelCollapse}>
-                          {t(f.element.toUpperCase())}
-                        </Text>
-                        {formData.types[index]?.value !== 'other' && (
-                          <TextInput
-                            placeholder={t('SEARCH')}
-                            value={searchQueries[index] || ''}
-                            onChangeText={text =>
-                              handleSearchChange(text, index)
-                            }
-                            style={styles.searchInput}
-                          />
-                        )}
                         <View style={styles.rowContainer}>
                           <View
                             style={[styles.planContainer, styles.fullWidth]}>
@@ -491,6 +464,8 @@ export default function Personelle() {
                           </View>
                         </View>
                       </>
+                    ) : f.element === 'deplacement' ? (
+                      <></>
                     ) : (
                       <></>
                     )}
@@ -696,6 +671,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderColor: '#CCC',
     borderWidth: 1,
+    height: 80,
+    maxHeight: 300,
     paddingHorizontal: 10,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 2},
@@ -721,6 +698,7 @@ const styles = StyleSheet.create({
   fullWidth: {
     width: '100%',
   },
+
   textPlan: {
     fontFamily: 'Poppins-Regular',
     flex: 1,
