@@ -27,12 +27,21 @@ import axios from 'axios';
 import {useTranslation} from 'react-i18next';
 
 export default function Personelle() {
+  const [searchQueries, setSearchQueries] = useState([]);
+  const handleSearchChange = (text, index) => {
+    const updatedQueries = [...searchQueries];
+    updatedQueries[index] = text;
+    setSearchQueries(updatedQueries);
+  };
   const navigation = useNavigation();
   const [thematiqueOptions, setThematiqueOptions] = useState([]);
   const [clubOptions, setClubOptions] = useState([]);
   const [formation, setFormationOption] = useState([]);
   const [league, setLeagueOption] = useState([]);
   const [collapsedSections, setCollapsedSections] = useState([]);
+
+  const [showDatePicker1, setShowDatePicker1] = useState(false);
+  const [showDatePicker2, setShowDatePicker2] = useState(false);
 
   const [showOtherInput, setShowOtherInput] = useState(false);
 
@@ -121,20 +130,24 @@ export default function Personelle() {
 
   const {t} = useTranslation();
 
-  const [datePickers, setDatePickers] = useState([
-    {
-      id: 1,
-      label: t('START_DATE'),
-      showPicker: false,
-      icon_name: 'calendar-start',
-    },
-    {
-      id: 2,
-      label: t('END_DATE'),
-      showPicker: false,
-      icon_name: 'calendar-end',
-    },
-  ]);
+  const handleDateChange = (event, selectedDate, dateType) => {
+    if (event.type === 'set') {
+      const currentDate = selectedDate || formData[dateType];
+      setFormData({...formData, [dateType]: currentDate});
+
+      if (dateType === 'dateDebut') {
+        setShowDatePicker1(false);
+      } else if (dateType === 'dateFin') {
+        setShowDatePicker2(false);
+      }
+    } else if (event.type === 'dismissed') {
+      if (dateType === 'dateDebut') {
+        setShowDatePicker1(false);
+      } else if (dateType === 'dateFin') {
+        setShowDatePicker2(false);
+      }
+    }
+  };
 
   const handleInputChange = (
     field,
@@ -158,31 +171,6 @@ export default function Personelle() {
     } else {
       setFormData({...formData, [field]: value});
     }
-  };
-
-  const handleDateChange = (index, selectedDate) => {
-    if (selectedDate) {
-      const currentDate = selectedDate || new Date();
-      if (index === 0) {
-        setFormData({...formData, dateDebut: currentDate});
-      } else {
-        setFormData({...formData, dateFin: currentDate});
-      }
-    }
-
-    setDatePickers(prevState => {
-      const updatedPickers = [...prevState];
-      updatedPickers[index].showPicker = false;
-      return updatedPickers;
-    });
-  };
-
-  const toggleDatePicker = index => {
-    setDatePickers(prevState => {
-      const updatedPickers = [...prevState];
-      updatedPickers[index].showPicker = !updatedPickers[index].showPicker;
-      return updatedPickers;
-    });
   };
 
   const handleSubmit = () => {
@@ -234,46 +222,47 @@ export default function Personelle() {
           </Picker>
         </View>
 
-        {datePickers.map((picker, index) => (
-          <View key={picker.id}>
-            <Text style={styles.label}>{picker.label}</Text>
-            <TouchableOpacity
-              style={styles.datePickerButton}
-              onPress={() => toggleDatePicker(index)}>
-              <Icon1 name={picker.icon_name} size={25} style={styles.icon} />
+        <Text style={styles.label}>{t('START_DATE')}</Text>
+        <TouchableOpacity
+          style={styles.datePickerButton}
+          onPress={() => setShowDatePicker1(true)}>
+          <Icon1 name="calendar-start" size={25} style={styles.icon} />
+          <Text style={styles.dateInput}>
+            {formData.dateDebut.toDateString()}
+          </Text>
+        </TouchableOpacity>
 
-              <Text style={styles.dateInput}>
-                {index === 0
-                  ? formData.dateDebut
-                    ? formData.dateDebut.toDateString()
-                    : ''
-                  : formData.dateFin
-                  ? formData.dateFin.toDateString()
-                  : ''}
-              </Text>
-            </TouchableOpacity>
+        {showDatePicker1 && (
+          <DateTimePicker
+            testID="dateTimePicker1"
+            value={formData.dateDebut}
+            mode="date"
+            display="default"
+            onChange={(event, date) =>
+              handleDateChange(event, date, 'dateDebut')
+            }
+          />
+        )}
 
-            {picker.showPicker && (
-              <DateTimePicker
-                testID="dateTimePicker"
-                mode="date"
-                display="default"
-                value={index === 0 ? formData.dateDebut : formData.dateFin}
-                onChange={(event, date) => {
-                  if (event.type === 'set') {
-                    handleDateChange(index, date);
-                  } else if (event.type === 'dismissed') {
-                    setDatePickers(prevState => {
-                      const updatedPickers = [...prevState];
-                      updatedPickers[index].showPicker = false;
-                      return updatedPickers;
-                    });
-                  }
-                }}
-              />
-            )}
-          </View>
-        ))}
+        <Text style={styles.label}>{t('END_DATE')}</Text>
+        <TouchableOpacity
+          style={styles.datePickerButton}
+          onPress={() => setShowDatePicker2(true)}>
+          <Icon1 name="calendar-end" size={25} style={styles.icon} />
+          <Text style={styles.dateInput}>
+            {formData.dateFin.toDateString()}
+          </Text>
+        </TouchableOpacity>
+
+        {showDatePicker2 && (
+          <DateTimePicker
+            testID="dateTimePicker2"
+            value={formData.dateFin}
+            mode="date"
+            display="default"
+            onChange={(event, date) => handleDateChange(event, date, 'dateFin')}
+          />
+        )}
 
         <View style={{marginTop: 15}}>
           {type_formation.map((f, index) => {
@@ -308,6 +297,16 @@ export default function Personelle() {
                         <Text style={styles.labelCollapse}>
                           {t(f.element.toUpperCase())}
                         </Text>
+                        {!formData.types[index]?.isOther && (
+                          <TextInput
+                            placeholder="Search..."
+                            value={searchQueries[index] || ''}
+                            onChangeText={text =>
+                              handleSearchChange(text, index)
+                            }
+                            style={styles.searchInput}
+                          />
+                        )}
                         <View style={styles.rowContainer}>
                           <View
                             style={[
@@ -332,14 +331,22 @@ export default function Personelle() {
                                   setShowOtherInput(false);
                                 }
                               }}>
-                              {clubOptions.map(cl => (
-                                <Picker.Item
-                                  style={styles.textPicker}
-                                  label={cl.name}
-                                  value={cl.id}
-                                  key={cl.id}
-                                />
-                              ))}
+                              {clubOptions
+                                .filter(cl =>
+                                  cl.name
+                                    .toLowerCase()
+                                    .includes(
+                                      searchQueries[index]?.toLowerCase() || '',
+                                    ),
+                                )
+                                .map(cl => (
+                                  <Picker.Item
+                                    style={styles.textPicker}
+                                    label={cl.name}
+                                    value={cl.id}
+                                    key={cl.id}
+                                  />
+                                ))}
                               <Picker.Item label="Other" value="other" />
                             </Picker>
                           </View>
@@ -371,6 +378,16 @@ export default function Personelle() {
                       <>
                         <Text style={styles.labelCollapse}>{f.label}</Text>
                         <View style={styles.otherContainer}>
+                          {!formData.types[index]?.isOther && (
+                            <TextInput
+                              placeholder="Search..."
+                              value={searchQueries[index] || ''}
+                              onChangeText={text =>
+                                handleSearchChange(text, index)
+                              }
+                              style={styles.searchInput}
+                            />
+                          )}
                           <View
                             style={[
                               styles.planContainer,
@@ -394,14 +411,22 @@ export default function Personelle() {
                                   setShowOtherInput(false);
                                 }
                               }}>
-                              {formations.map(fm => (
-                                <Picker.Item
-                                  style={styles.textPicker}
-                                  label={fm.value}
-                                  value={fm.id}
-                                  key={fm.id}
-                                />
-                              ))}
+                              {formations
+                                .filter(fm =>
+                                  fm.value
+                                    .toLowerCase()
+                                    .includes(
+                                      searchQueries[index]?.toLowerCase() || '',
+                                    ),
+                                )
+                                .map(fm => (
+                                  <Picker.Item
+                                    style={styles.textPicker}
+                                    label={fm.value}
+                                    value={fm.id}
+                                    key={fm.id}
+                                  />
+                                ))}
                               <Picker.Item label="Other" value="other" />
                             </Picker>
                           </View>
@@ -434,6 +459,16 @@ export default function Personelle() {
                         <Text style={styles.labelCollapse}>
                           {t(f.element.toUpperCase())}
                         </Text>
+                        {!formData.types[index]?.isOther && (
+                          <TextInput
+                            placeholder="Search..."
+                            value={searchQueries[index] || ''}
+                            onChangeText={text =>
+                              handleSearchChange(text, index)
+                            }
+                            style={styles.searchInput}
+                          />
+                        )}
                         <View style={styles.rowContainer}>
                           <View
                             style={[
@@ -458,14 +493,23 @@ export default function Personelle() {
                                   setShowOtherInput(false);
                                 }
                               }}>
-                              {leagues.map(lg => (
-                                <Picker.Item
-                                  style={styles.textPicker}
-                                  label={lg.label}
-                                  value={lg.id}
-                                  key={lg.id}
-                                />
-                              ))}
+                              {leagues
+                                .filter(lg =>
+                                  lg.label
+                                    .toLowerCase()
+                                    .includes(
+                                      searchQueries[index]?.toLowerCase() || '',
+                                    ),
+                                )
+
+                                .map(lg => (
+                                  <Picker.Item
+                                    style={styles.textPicker}
+                                    label={lg.label}
+                                    value={lg.id}
+                                    key={lg.id}
+                                  />
+                                ))}
                               <Picker.Item label="Other" value="other" />
                             </Picker>
                           </View>
@@ -548,6 +592,16 @@ export default function Personelle() {
 }
 
 const styles = StyleSheet.create({
+  searchInput: {
+    height: 45,
+    fontFamily: 'Poppins-Regular',
+    borderColor: 'gray',
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    backgroundColor: '#fff',
+  },
+
   text: {
     fontSize: 20,
     fontFamily: 'Poppins-Bold',
