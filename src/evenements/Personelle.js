@@ -296,7 +296,9 @@ export default function Personelle() {
                     },
                   ]}>
                   <Icon name="radio-button-on" size={18} color="white" />
-                  <Text style={styles.buttonText}>{t(f.label)}</Text>
+                  <Text style={styles.buttonText}>
+                    {t(f.label.toUpperCase().replace(/ /g, '_'))}
+                  </Text>
                 </TouchableOpacity>
 
                 <Collapsible collapsed={!collapsedSections.includes(index)}>
@@ -495,7 +497,7 @@ export default function Personelle() {
                       <></>
                     )}
 
-                    <Text style={styles.labelCollapse}>Lieu</Text>
+                    <Text style={styles.labelCollapse}>{t('PLACE')}</Text>
                     <View style={styles.planContainer}>
                       <Icon name="place" size={25} style={styles.icon} />
                       <TextInput

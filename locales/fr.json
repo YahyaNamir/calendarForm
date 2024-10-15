@@ -9,8 +9,18 @@
   "THEME": "Thématique",
   "CLUB": "Equipe",
   "LOCATION": "Lieu",
-  "NOTE": "Note",
   "SUBMIT": "Submit",
   "LIGUE": "Lige",
-  "Centre de perfectionnement": "Centre de perfectionnement fr"
+  "NOTE": "Note",
+  "PLACE": "Lieu",
+  "CENTRE_DE_PERFECTIONNEMENT": "Centre de perfectionnement",
+  "COURS_SPÉCIALISÉS_DES_ENTRAÎNEURS_DES_JEUNES": "Cours spécialisés des entraîneurs des jeunes",
+  "DÉTECTION_DES_JOUEURS": "Détection des joueurs",
+  "DÉVELOPPEMENT_OU_ENTRAÎNEMENT_DES_JOUEURS": "Développement ou entraînement des joueurs",
+  "DÉPLACEMENT": "Déplacement",
+  "FORMATION": "Formation",
+  "OBSERVATION_DES_JOUEURS": "Observation des joueurs",
+  "OBSERVER_UN_MATCH": "Observer un match",
+  "VISITE_D'ACCOMPAGNEMENT_D'UN_CLUB": "Visite d'accompagnement d'un club",
+  "VISITE_D'UNE_LIGUE_RÉGIONALE": "Visite d'une ligue régionale"
 }

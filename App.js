@@ -37,6 +37,7 @@ export default function App() {
             headerTintColor: '#fff',
             headerTitleStyle: {fontSize: 16, fontFamily: 'Poppins-Bold'},
             headerTitleAlign: 'center',
+            headerRight: () => <HeaderRight />
           }}
         />
         <Stack.Screen

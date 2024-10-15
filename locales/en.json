@@ -14,5 +14,16 @@
   "LIGUE": "League",
   "PLACE": "Place",
   "NOTES": "Note",
-  "Centre_de_perfectionnement": "Centre de perfectionnement en"
+  "NOTE": "Note",
+  "PLACE": "Place",
+  "CENTRE_DE_PERFECTIONNEMENT": "Development Center",
+  "COURS_SPÉCIALISÉS_DES_ENTRAÎNEURS_DES_JEUNES": "Specialized Courses for Youth Coaches",
+  "DÉTECTION_DES_JOUEURS": "Player Detection",
+  "DÉVELOPPEMENT_OU_ENTRAÎNEMENT_DES_JOUEURS": "Player Development or Training",
+  "DÉPLACEMENT": "Movement",
+  "FORMATION": "Training",
+  "OBSERVATION_DES_JOUEURS": "Player Observation",
+  "OBSERVER_UN_MATCH": "Watch a Match",
+  "VISITE_D'ACCOMPAGNEMENT_D'UN_CLUB": "Club Accompaniment Visit",
+  "VISITE_D'UNE_LIGUE_RÉGIONALE": "Visit of a Regional League"
 }
