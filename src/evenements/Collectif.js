@@ -1,63 +1,37 @@
-import React, {useState} from 'react'; // Import useState
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import React, { useState } from 'react'; // Import useState
+import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import DateTimePicker from '@react-native-community/datetimepicker'; // Import DateTimePicker
 
 export default function Collectif() {
   const navigation = useNavigation();
-  const [showDatePicker1, setShowDatePicker1] = useState(false);
-  const [showDatePicker2, setShowDatePicker2] = useState(false);
-  const [formData, setFormData] = useState({
-    date1: new Date(),
-    date2: new Date(),
-  }); 
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [formData, setFormData] = useState({ date: new Date() }); // Initialize formData
 
-  const handleDateChange = (event, selectedDate, dateType) => {
-    const currentDate = selectedDate || formData[dateType]; 
-    setFormData({...formData, [dateType]: currentDate});    
-
-    if (dateType === 'date1') {
-      setShowDatePicker1(false);
-    } else {
-      setShowDatePicker2(false);
-    }
+  const handleDateChange = (event, selectedDate) => {
+    const currentDate = selectedDate || formData.date; // Use current date if no date is selected
+    setShowDatePicker(false);
+    setFormData({ ...formData, date: currentDate }); // Update formData with the selected date
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Collectif</Text>
 
-      <Text style={styles.label}>DATE_OF_MALADY 1</Text>
+      <Text style={styles.label}>DATE_OF_MALADY</Text>
       <TouchableOpacity
         style={styles.datePickerButton}
-        onPress={() => setShowDatePicker1(true)}>
-        <Text style={styles.input}>{formData.date1.toDateString()}</Text>
+        onPress={() => setShowDatePicker(true)}>
+        <Text style={styles.input}>{formData.date.toDateString()}</Text>
       </TouchableOpacity>
 
-      {showDatePicker1 && (
+      {showDatePicker && (
         <DateTimePicker
-          testID="dateTimePicker1"
-          value={formData.date1}
+          testID="dateTimePicker"
+          value={formData.date}
           mode="date"
           display="default"
-          onChange={(event, date) => handleDateChange(event, date, 'date1')}
-        />
-      )}
-
-      <Text style={styles.label}>DATE_OF_MALADY 2</Text>
-      <TouchableOpacity
-        style={styles.datePickerButton}
-        onPress={() => setShowDatePicker2(true)}>
-        <Text style={styles.input}>{formData.date2.toDateString()}</Text>
-      </TouchableOpacity>
-
-      {showDatePicker2 && (
-        <DateTimePicker
-          testID="dateTimePicker2"
-          value={formData.date2}
-          mode="date"
-          display="default"
-          onChange={(event, date) => handleDateChange(event, date, 'date2')}
+          onChange={handleDateChange}
         />
       )}
 

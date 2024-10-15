@@ -56,7 +56,7 @@ export default function Personelle() {
       note: null,
       value: null,
       color: f.color,
-      otherValue: '',
+      value_autre: '',
       isOther: false,
     })),
   });
@@ -159,7 +159,7 @@ export default function Personelle() {
       const updatedTypes = formData.types.map((item, idx) => {
         if (idx === index) {
           if (isOtherValue) {
-            return {...item, otherValue: value};
+            return {...item, value_autre: value};
           } else {
             const isOtherSelected = value === 'other';
             return {...item, [field]: value, isOther: isOtherSelected};
@@ -238,9 +238,10 @@ export default function Personelle() {
             value={formData.dateDebut}
             mode="date"
             display="default"
-            onChange={(event, date) =>
-              handleDateChange(event, date, 'dateDebut')
-            }
+            onChange={(event, date) => {
+              setShowDatePicker1(false);
+              handleDateChange(event, date, 'dateDebut');
+            }}
           />
         )}
 
@@ -260,7 +261,10 @@ export default function Personelle() {
             value={formData.dateFin}
             mode="date"
             display="default"
-            onChange={(event, date) => handleDateChange(event, date, 'dateFin')}
+            onChange={(event, date) => {
+              setShowDatePicker2(false);
+              handleDateChange(event, date, 'dateFin');
+            }}
           />
         )}
 
@@ -297,9 +301,9 @@ export default function Personelle() {
                         <Text style={styles.labelCollapse}>
                           {t(f.element.toUpperCase())}
                         </Text>
-                        {!formData.types[index]?.isOther && (
+                        {formData.types[index]?.value !== 'other' && (
                           <TextInput
-                            placeholder="Search..."
+                            placeholder={t('SEARCH')}
                             value={searchQueries[index] || ''}
                             onChangeText={text =>
                               handleSearchChange(text, index)
@@ -360,10 +364,10 @@ export default function Personelle() {
                               <TextInput
                                 style={styles.textPlan}
                                 placeholder="Other..."
-                                value={formData.types[index]?.otherValue}
+                                value={formData.types[index]?.value_autre}
                                 onChangeText={text => {
                                   handleInputChange(
-                                    'otherValue',
+                                    'value_autre',
                                     text,
                                     index,
                                     true,
@@ -376,82 +380,60 @@ export default function Personelle() {
                       </>
                     ) : f.element === 'formation' ? (
                       <>
-                        <Text style={styles.labelCollapse}>{f.label}</Text>
+                        <Text style={styles.labelCollapse}>
+                          {t(f.element.toUpperCase())}
+                        </Text>
                         <View style={styles.otherContainer}>
-                          {!formData.types[index]?.isOther && (
-                            <TextInput
-                              placeholder="Search..."
-                              value={searchQueries[index] || ''}
-                              onChangeText={text =>
-                                handleSearchChange(text, index)
-                              }
-                              style={styles.searchInput}
-                            />
-                          )}
-                          <View
-                            style={[
-                              styles.planContainer,
-                              formData.types[index]?.value === 'other'
-                                ? styles.halfWidth
-                                : styles.fullWidth,
-                            ]}>
-                            <Icon1
-                              name="soccer"
-                              size={25}
-                              style={styles.icon}
-                            />
-                            <Picker
-                              style={styles.picker}
-                              selectedValue={formData.types[index]?.value}
-                              onValueChange={itemValue => {
-                                handleInputChange('value', itemValue, index);
-                                if (itemValue === 'other') {
-                                  setShowOtherInput(true);
-                                } else {
-                                  setShowOtherInput(false);
-                                }
-                              }}>
-                              {formations
-                                .filter(fm =>
-                                  fm.value
-                                    .toLowerCase()
-                                    .includes(
-                                      searchQueries[index]?.toLowerCase() || '',
-                                    ),
-                                )
-                                .map(fm => (
-                                  <Picker.Item
-                                    style={styles.textPicker}
-                                    label={fm.value}
-                                    value={fm.id}
-                                    key={fm.id}
-                                  />
-                                ))}
-                              <Picker.Item label="Other" value="other" />
-                            </Picker>
-                          </View>
-
-                          {formData.types[index]?.value === 'other' && (
-                            <View
-                              style={[
-                                styles.planContainerCola,
-                                styles.halfWidth,
-                              ]}>
+                          {formData.types[index]?.value !==
+                            'other'(
                               <TextInput
-                                style={styles.textPlan}
-                                placeholder="Other ..."
-                                value={formData.types[index]?.otherValue}
-                                onChangeText={text => {
-                                  handleInputChange(
-                                    'otherValue',
-                                    text,
-                                    index,
-                                    true,
-                                  );
-                                }}
+                                placeholder={t('SEARCH')}
+                                value={searchQueries[index] || ''}
+                                onChangeText={text =>
+                                  handleSearchChange(text, index)
+                                }
+                                style={styles.searchInput}
+                              />,
+                            )}
+                          <View style={styles.rowContainer}>
+                            <View
+                              style={[styles.planContainer, styles.fullWidth]}>
+                              <Icon1
+                                name="soccer"
+                                size={25}
+                                style={styles.icon}
                               />
+                              <Picker
+                                style={styles.picker}
+                                selectedValue={formData.types[index]?.value}
+                                onValueChange={itemValue => {
+                                  handleInputChange('value', itemValue, index);
+                                  if (itemValue === 'other') {
+                                    setShowOtherInput(true);
+                                  } else {
+                                    setShowOtherInput(false);
+                                  }
+                                }}>
+                                {formations
+                                  .filter(fm =>
+                                    fm.value
+                                      .toLowerCase()
+                                      .includes(
+                                        searchQueries[index]?.toLowerCase() ||
+                                          '',
+                                      ),
+                                  )
+                                  .map(fm => (
+                                    <Picker.Item
+                                      style={styles.textPicker}
+                                      label={fm.value}
+                                      value={fm.id}
+                                      key={fm.id}
+                                    />
+                                  ))}
+                              </Picker>
                             </View>
-                          )}
+                          </View>
                         </View>
                       </>
                     ) : f.element === 'ligue' ? (
@@ -459,9 +441,9 @@ export default function Personelle() {
                         <Text style={styles.labelCollapse}>
                           {t(f.element.toUpperCase())}
                         </Text>
-                        {!formData.types[index]?.isOther && (
+                        {formData.types[index]?.value !== 'other' && (
                           <TextInput
-                            placeholder="Search..."
+                            placeholder={t('SEARCH')}
                             value={searchQueries[index] || ''}
                             onChangeText={text =>
                               handleSearchChange(text, index)
@@ -471,12 +453,7 @@ export default function Personelle() {
                         )}
                         <View style={styles.rowContainer}>
                           <View
-                            style={[
-                              styles.planContainer,
-                              formData.types[index]?.value === 'other'
-                                ? styles.halfWidth
-                                : styles.fullWidth,
-                            ]}>
+                            style={[styles.planContainer, styles.fullWidth]}>
                             <Icon1
                               name="soccer"
                               size={25}
@@ -510,31 +487,8 @@ export default function Personelle() {
                                     key={lg.id}
                                   />
                                 ))}
-                              <Picker.Item label="Other" value="other" />
                             </Picker>
                           </View>
-
-                          {formData.types[index]?.value === 'other' && (
-                            <View
-                              style={[
-                                styles.planContainerCola,
-                                styles.halfWidth,
-                              ]}>
-                              <TextInput
-                                style={styles.textPlan}
-                                placeholder="Other ..."
-                                value={formData.types[index]?.otherValue}
-                                onChangeText={text => {
-                                  handleInputChange(
-                                    'otherValue',
-                                    text,
-                                    index,
-                                    true,
-                                  );
-                                }}
-                              />
-                            </View>
-                          )}
                         </View>
                       </>
                     ) : (
@@ -545,7 +499,7 @@ export default function Personelle() {
                     <View style={styles.planContainer}>
                       <Icon name="place" size={25} style={styles.icon} />
                       <TextInput
-                        placeholder="Lieu"
+                        placeholder={`${t('PLACE')}...`}
                         multiline
                         numberOfLines={2}
                         value={formData.types[index]?.lieu || ''}
@@ -556,12 +510,12 @@ export default function Personelle() {
                       />
                     </View>
 
-                    <Text style={styles.labelCollapse}>Note</Text>
-                    <View style={styles.planContainer}>
+                    <Text style={styles.labelCollapse}>{t('NOTE')}</Text>
+                    <View style={styles.planContainerNote}>
                       <Icon1 name="note" size={25} style={styles.icon} />
                       <TextInput
-                        placeholder="Note"
-                        numberOfLines={10}
+                        placeholder={`${t('NOTE')}...`}
+                        numberOfLines={3}
                         multiline={true}
                         value={formData.types[index]?.note || ''}
                         onChangeText={text =>
@@ -579,12 +533,6 @@ export default function Personelle() {
 
         <TouchableOpacity style={styles.button} onPress={handleSubmit}>
           <Text style={styles.buttonText}>Submit</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate('Evenement')}>
-          <Text style={styles.buttonText}>Go Back</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -729,6 +677,21 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     height: 50,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    borderColor: '#CCC',
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+    alignItems: 'center',
+  },
+  planContainerNote: {
+    display: 'flex',
+    flexDirection: 'row',
     backgroundColor: '#fff',
     borderRadius: 8,
     borderColor: '#CCC',
