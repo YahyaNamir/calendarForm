@@ -1,0 +1,42 @@
+[
+  {
+    "type": "activite parascolaire",
+    "date_debut": "2024-10-02 00:00",
+    "date_fin": "2024-10-23 21:35",
+    "titre": "titte",
+    "see": 2,
+    "equipes_ids": [597],
+    "joueurs_id": "16992,17025,17076",
+    "sub_id": 231
+  },
+  {
+    "type": "dormir",
+    "date_debut": "2024-10-01 00:00",
+    "date_fin": "2024-10-31 21:36",
+    "titre": "2",
+    "see": 2,
+    "equipes_ids": [597],
+    "joueurs_id": "16992,17025",
+    "sub_id": 231
+  },
+  {
+    "type": "activite parascolaire",
+    "date_debut": "2024-10-02 00:00",
+    "date_fin": "2024-10-23 21:35",
+    "titre": "titte",
+    "see": 2,
+    "equipes_ids": [597],
+    "joueurs_id": "16992,17025,17076",
+    "sub_id": 231
+  },
+  {
+    "type": "activite parascolaire",
+    "date_debut": "2024-09-30 00:00",
+    "date_fin": "2024-09-30 00:00",
+    "titre": "alone",
+    "see": 2,
+    "equipes_ids": [597],
+    "joueurs_id": "15705,16992,17025,2631,15063,17076",
+    "sub_id": 231
+  }
+]

@@ -183,7 +183,7 @@ export default function Personelle() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.scrollContainer}>
+    <ScrollView>
       <View style={styles.container}>
         <View style={styles.row}>
           <FontAwesome name="user-circle" size={28} style={styles.icon} />

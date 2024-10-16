@@ -1,0 +1,19 @@
+[
+  {"id": 1, "name": "Activite Parascolaire"},
+  {"id": 2, "name": "Dejeuner"},
+  {"id": 3, "name": "Dormir"},
+  {"id": 4, "name": "Détection"},
+  {"id": 5, "name": "Goûter"},
+  {"id": 6, "name": "Meeting"},
+  {"id": 7, "name": "Petit-déjeuner"},
+  {"id": 8, "name": "Presentation"},
+  {"id": 9, "name": "Repos"},
+  {"id": 10, "name": "Scolarite"},
+  {"id": 11, "name": "Scouting"},
+  {"id": 12, "name": "Social"},
+  {"id": 13, "name": "Stage"},
+  {"id": 14, "name": "Tournois"},
+  {"id": 15, "name": "Vacances"},
+  {"id": 16, "name": "Dîner"},
+  {"id": 17, "name": "Autres Action"}
+]

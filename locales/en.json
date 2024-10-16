@@ -26,5 +26,10 @@
   "OBSERVATION_DES_JOUEURS": "Player Observation",
   "OBSERVER_UN_MATCH": "Watch a Match",
   "VISITE_D'ACCOMPAGNEMENT_D'UN_CLUB": "Club Accompaniment Visit",
-  "VISITE_D'UNE_LIGUE_RÉGIONALE": "Visit of a Regional League"
+  "VISITE_D'UNE_LIGUE_RÉGIONALE": "Visit of a Regional League",
+  "TITLE_OF_EVENT": "Event Title",
+  "TYPE": "Type",
+  "SELECT_PLAYERS": "Select players :",
+  "INFORM_SOME_PLAYERS": "Inform some players",
+  "INFORM_ALL_PLAYERS": "Inform all players"
 }

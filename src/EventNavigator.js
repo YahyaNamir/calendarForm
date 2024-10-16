@@ -16,18 +16,19 @@ export default function EventNavigator() {
         <Icon2 name="pluscircle" size={25} style={styles.icon} />
         <Text style={styles.text}>{t('ADD_EVENT')}</Text>
       </View>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate('Personelle')}>
-        <Icon name="user-circle" size={30} color="#ffffff" />
-        <Text style={styles.buttonText}>{t('PERSONAL')}</Text>
-      </TouchableOpacity>
 
       <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate('Collectif')}>
         <Icon1 name="people-circle-sharp" size={30} color="#ffffff" />
         <Text style={styles.buttonText}>{t('COLLECTIVE')}</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate('Personelle')}>
+        <Icon name="user-circle" size={30} color="#ffffff" />
+        <Text style={styles.buttonText}>{t('PERSONAL')}</Text>
       </TouchableOpacity>
     </View>
   );
