@@ -46,8 +46,8 @@ export default function Personelle() {
   const [showOtherInput, setShowOtherInput] = useState(false);
 
   const [formData, setFormData] = useState({
-    planning: '',
-    pole: '',
+    planning: null,
+    pole: null,
     dateDebut: new Date(),
     dateFin: new Date(),
     types: type_formation.map(f => ({
@@ -174,12 +174,16 @@ export default function Personelle() {
   };
 
   const handleSubmit = () => {
-    console.log(JSON.stringify(formData, null, 2));
+    if (formData.pole === null || formData.planning === null) {
+      Alert.alert('Remplir tous les champs!!');
+    } else {
+      console.log(JSON.stringify(formData, null, 2));
+      Alert.alert('Form Submitted!');
 
-    Alert.alert('Form Submitted!');
-    setTimeout(() => {
-      navigation.navigate('Evenement');
-    }, 10);
+      setTimeout(() => {
+        navigation.navigate('Evenement');
+      }, 10);
+    }
   };
 
   return (
@@ -245,7 +249,7 @@ export default function Personelle() {
           />
         )}
 
-        <Text style={styles.label}>{t('END_DATE')}</Text>
+        <Text style={styles.label}>{t('END_DATE')}*</Text>
         <TouchableOpacity
           style={styles.datePickerButton}
           onPress={() => setShowDatePicker2(true)}>

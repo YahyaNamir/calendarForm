@@ -12,6 +12,8 @@ import {useTranslation} from 'react-i18next';
 const Stack = createStackNavigator();
 
 export default function App() {
+  const {t} = useTranslation();
+
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="EventNavigator">
@@ -19,7 +21,7 @@ export default function App() {
           name="Evenement"
           component={EventNavigator}
           options={{
-            headerTitle: 'Evenement',
+            headerTitle: t('EVENT'),
             headerStyle: {backgroundColor: '#006536'},
             headerTintColor: '#fff',
             headerTitleStyle: {fontSize: 16, fontFamily: 'Poppins-Bold'},
@@ -32,7 +34,7 @@ export default function App() {
           component={Personelle}
           options={{
             headerShown: true,
-            headerTitle: 'Personelle',
+            headerTitle: t('PERSONAL'),
             headerStyle: {backgroundColor: '#006536'},
             headerTintColor: '#fff',
             headerTitleStyle: {fontSize: 16, fontFamily: 'Poppins-Bold'},
@@ -45,7 +47,7 @@ export default function App() {
           component={Collectif}
           options={{
             headerShown: true,
-            headerTitle: 'Collectif',
+            headerTitle: t('COLLECTIVE'),
             headerStyle: {backgroundColor: '#006536'},
             headerTintColor: '#fff',
             headerTitleStyle: {fontSize: 16, fontFamily: 'Poppins-Bold'},

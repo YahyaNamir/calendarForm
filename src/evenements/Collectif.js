@@ -27,50 +27,25 @@ export default function Personelle() {
   const {t} = useTranslation();
   const navigation = useNavigation();
 
-  const [formData, setFormData] = useState({
-    titre: '',
-    type: '',
+  const [formData1, setFormData1] = useState({
+    titre: null,
+    type: null,
     date_debut: new Date(),
     date_fin: new Date(),
     joueurs_id: '',
     see: 2,
     sub_id: 231,
-    // types: type_formation.map(f => ({
-    //   type: f.type,
-    //   lieu: null,
-    //   note: null,
-    //   value: null,
-    //   color: f.color,
-    //   value_autre: null,
-    //   isOther: false,
-    // })),
+    equipes_ids: [597],
   });
   const [showDatePicker1, setShowDatePicker1] = useState(false);
   const [showDatePicker2, setShowDatePicker2] = useState(false);
   const [typeOptions, setTypeOption] = useState([]);
 
-  const handleInputChange = (
-    field,
-    value,
-    index = null,
-    isOtherValue = false,
-  ) => {
-    if (index !== null) {
-      const updatedTypes = formData.types.map((item, idx) => {
-        if (idx === index) {
-          if (isOtherValue) {
-            return {...item, value_autre: value};
-          } else {
-            const isOtherSelected = value === 'other';
-            return {...item, [field]: value, isOther: isOtherSelected};
-          }
-        }
-        return item;
-      });
-      setFormData({...formData, types: updatedTypes});
-    } else {
-      setFormData({...formData, [field]: value});
-    }
+  const handleInputChange = (field, value) => {
+    setFormData1(prevState => ({
+      ...prevState,
+      [field]: value,
+    }));
   };
 
   useEffect(() => {
@@ -91,35 +66,43 @@ export default function Personelle() {
   }, []);
 
   const handleDateChange = (event, selectedDate, dateType) => {
-    if (event.type === 'set') {
-      const currentDate = selectedDate || formData[dateType];
-      setFormData({...formData, [dateType]: currentDate});
+    const currentDate = selectedDate || formData1[dateType];
+    setFormData1(prevState => ({
+      ...prevState,
+      [dateType]: currentDate,
+    }));
 
-      if (dateType === 'date_debut') {
-        setShowDatePicker1(false);
-      } else if (dateType === 'date_fin') {
-        setShowDatePicker2(false);
-      }
-    } else if (event.type === 'dismissed') {
-      if (dateType === 'date_debut') {
-        setShowDatePicker1(false);
-      } else if (dateType === 'date_fin') {
-        setShowDatePicker2(false);
-      }
+    if (dateType === 'date_debut') {
+      setShowDatePicker1(false);
+    } else if (dateType === 'date_fin') {
+      setShowDatePicker2(false);
+    }
+  };
+  const handleSubmit = () => {
+    let joueurs_id = formData1.joueurs_id;
+
+    if (checkBoxStatus.allPlayers) {
+      joueurs_id = playerState.map(player => player.id).join(',');
+    }
+    const formDataToSubmit = {
+      ...formData1,
+      joueurs_id,
+    };
+    if (formData1.titre === null || formData1.type === null) {
+      Alert.alert('Remplir tous les champs!!');
+    } else {
+      console.log(JSON.stringify(formDataToSubmit, null, 2));
+      Alert.alert('Form Submitted!');
+      setTimeout(() => {
+        navigation.navigate('Evenement');
+      }, 10);
     }
   };
 
-  const handleSubmit = () => {
-    console.log(JSON.stringify(formData, null, 2));
-
-    Alert.alert('Form Submitted!');
-    // setTimeout(() => {
-    //   navigation.navigate('Evenement');
-    // }, 10);
-  };
-  const [isChecked, setIsChecked] = useState(false);
+  const [isCheckedDate, setIsCheckedDate] = useState(false);
+  const [isCheckedPlayer, setIsCheckedPlayer] = useState(true);
   const [checkBoxStatus, setCheckBoxStatus] = useState({
-    allPlayers: false,
+    allPlayers: true,
     somePlayers: false,
   });
 
@@ -141,13 +124,14 @@ export default function Personelle() {
     fetchThematiqueData();
   }, []);
 
-  const onSelectedItemsChange = selectedItems => {
+  const handleSelectPlayer = selectedItems => {
     const joueursId = selectedItems.join(',');
-    setFormData(prevState => ({
+    setFormData1(prevState => ({
       ...prevState,
       joueurs_id: joueursId,
     }));
   };
+
   return (
     <ScrollView>
       <View style={styles.container}>
@@ -166,8 +150,8 @@ export default function Personelle() {
             multiline
             numberOfLines={2}
             style={styles.textPlan}
-            value={formData.titre}
-            onChangeText={text => setFormData({...formData, titre: text})}
+            value={formData1.titre}
+            onChangeText={text => handleInputChange('titre', text)}
           />
         </View>
 
@@ -176,7 +160,8 @@ export default function Personelle() {
           <Icon name="bookmark" size={25} style={styles.icon} />
           <Picker
             style={styles.picker}
-            selectedValue={formData.type}
+            placeholder="Select"
+            selectedValue={formData1.type}
             onValueChange={itemValue => handleInputChange('type', itemValue)}>
             {typeOptions.map(ty => (
               <Picker.Item
@@ -195,14 +180,14 @@ export default function Personelle() {
           onPress={() => setShowDatePicker1(true)}>
           <Icon2 name="calendar-start" size={25} style={styles.icon} />
           <Text style={styles.dateInput}>
-            {formData.date_debut.toDateString()}
+            {formData1.date_debut.toDateString()}
           </Text>
         </TouchableOpacity>
 
         {showDatePicker1 && (
           <DateTimePicker
             testID="dateTimePicker1"
-            value={formData.date_debut}
+            value={formData1.date_debut}
             mode="date"
             display="default"
             onChange={(event, date) => {
@@ -212,28 +197,29 @@ export default function Personelle() {
           />
         )}
         <View style={styles.checkBoxContainer}>
+          <Icon2 name="calendar-end" size={25} style={styles.iconEnd} />
           <Text style={styles.checkBoxLabel}>{t('END_DATE')}</Text>
           <CheckBox
-            onClick={() => setIsChecked(!isChecked)}
-            isChecked={isChecked}
-            style={styles.checkBox}
+            onClick={() => setIsCheckedDate(!isCheckedDate)}
+            isChecked={isCheckedDate}
+            style={styles.checkBoxEnd}
           />
         </View>
 
-        {isChecked && (
+        {isCheckedDate && (
           <>
             <TouchableOpacity
               style={styles.datePickerButton}
               onPress={() => setShowDatePicker2(true)}>
               <Icon2 name="calendar-end" size={25} style={styles.icon} />
               <Text style={styles.dateInput}>
-                {formData.date_fin.toDateString()}
+                {formData1.date_fin.toDateString()}
               </Text>
             </TouchableOpacity>
             {showDatePicker2 && (
               <DateTimePicker
                 testID="dateTimePicker2"
-                value={formData.date_fin}
+                value={formData1.date_fin}
                 mode="date"
                 display="default"
                 onChange={(event, date) => {
@@ -249,26 +235,35 @@ export default function Personelle() {
 
         <View style={[styles.checkBoxContainer, styles.planContainer]}>
           <CheckBox
-            onClick={() =>
-              setCheckBoxStatus({allPlayers: false, somePlayers: true})
-            }
-            isChecked={checkBoxStatus.somePlayers}
+            onClick={() => {
+              const allPlayerIds = playerState.map(player => player.id);
+              setCheckBoxStatus({allPlayers: true, somePlayers: false});
+              setFormData1(prevState => ({
+                ...prevState,
+                joueurs_id: allPlayerIds.join(','),
+              }));
+            }}
+            isChecked={checkBoxStatus.allPlayers}
             style={styles.checkBox}
           />
 
-          <Icon1 name="people-circle-sharp" size={30} color="#000000" />
+          <Icon1 name="people" size={28} style={styles.iconPeople} />
           <Text style={styles.checkBoxLabel}> {t('INFORM_ALL_PLAYERS')}</Text>
         </View>
 
         <View style={[styles.checkBoxContainer, styles.planContainer]}>
           <CheckBox
-            onClick={() =>
-              setCheckBoxStatus({allPlayers: true, somePlayers: false})
-            }
-            isChecked={checkBoxStatus.allPlayers}
+            onClick={() => {
+              setCheckBoxStatus({allPlayers: false, somePlayers: true});
+              setFormData1(prevState => ({
+                ...prevState,
+                joueurs_id: '',
+              }));
+            }}
+            isChecked={checkBoxStatus.somePlayers}
             style={styles.checkBox}
           />
-          <Icon1 name="people-circle-sharp" size={30} color="#000000" />
+          <Icon1 name="person-add" size={28} style={styles.iconPeople} />
           <Text style={styles.checkBoxLabel}>{t('INFORM_SOME_PLAYERS')}</Text>
         </View>
 
@@ -279,8 +274,12 @@ export default function Personelle() {
                 hideTags
                 items={playerState}
                 uniqueKey="id"
-                onSelectedItemsChange={onSelectedItemsChange}
-                selectedItems={formData.joueurs_id.split(',')}
+                onSelectedItemsChange={handleSelectPlayer}
+                selectedItems={
+                  formData1.joueurs_id
+                    ? formData1.joueurs_id.split(',').filter(id => id)
+                    : []
+                }
                 selectText="Pick Players"
                 searchInputPlaceholderText="Search Players..."
                 submitButtonText="Submit"
@@ -332,18 +331,10 @@ const styles = StyleSheet.create({
   checkBox: {
     marginBottom: 4,
   },
-  // icon: {
-  //   marginHorizontal: 10,
-  // },
-
-  searchInput: {
-    height: 45,
-    fontFamily: 'Poppins-Regular',
-    borderColor: 'gray',
-    borderWidth: 1,
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    backgroundColor: '#fff',
+  checkBoxEnd: {
+    marginBottom: 4,
+    marginTop: 2,
+    marginLeft: 5,
   },
 
   text: {
@@ -378,15 +369,6 @@ const styles = StyleSheet.create({
     marginTop: 15,
     color: 'black',
     fontFamily: 'Poppins-Bold',
-  },
-  buttonCollapse: {
-    fontSize: 16,
-    padding: 10,
-    textAlign: 'left',
-    borderRadius: 5,
-    fontFamily: 'Poppins-Bold',
-    flexDirection: 'row',
-    alignItems: 'center',
   },
 
   buttonText: {
@@ -436,39 +418,17 @@ const styles = StyleSheet.create({
     marginRight: 10,
     color: '#0e9b49',
   },
-
-  collapsibleContent: {
-    padding: 8,
-    borderRadius: 5,
-    backgroundColor: '#d4f9e3d7',
+  iconEnd: {
+    // marginRight: 5,
+    color: '#000000',
   },
-
-  textCollapse: {
-    backgroundColor: 'white',
-    color: 'black',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    flex: 1,
-    width: '100%',
-  },
-
-  labelCollapse: {
-    fontSize: 15,
+  iconPeople: {
+    marginRight: 5,
+    marginLeft: 10,
     marginBottom: 5,
-    marginTop: 5,
-    color: 'black',
-    fontFamily: 'Poppins-Bold',
+    color: '#000000',
   },
-  rowContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    width: '100%',
-  },
+
   planContainer: {
     display: 'flex',
     flexDirection: 'row',
@@ -486,9 +446,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   planContainerMulti: {
-    // display: 'flex',
-    // flexDirection: 'row',
-    // height: 50,
     backgroundColor: '#fff',
     borderRadius: 8,
     borderColor: '#CCC',
@@ -499,43 +456,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 2,
-    // alignItems: 'center',
   },
-  planContainerNote: {
-    display: 'flex',
-    flexDirection: 'row',
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    borderColor: '#CCC',
-    borderWidth: 1,
-    height: 80,
-    maxHeight: 300,
-    paddingHorizontal: 10,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-    alignItems: 'center',
-  },
-  planContainerCola: {
-    display: 'flex',
-    flexDirection: 'row',
-    height: 50,
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    borderColor: '#CCC',
-    borderWidth: 1,
-    paddingHorizontal: 10,
-    alignItems: 'center',
-  },
-  halfWidth: {
-    width: '50%',
-  },
-  fullWidth: {
-    width: '100%',
-  },
-
   textPlan: {
     fontFamily: 'Poppins-Regular',
     flex: 1,

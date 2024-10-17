@@ -1,9 +1,10 @@
 {
   "ADD_EVENT": "Add an Event",
+  "EVENT": "Event",
   "PERSONAL": "Personal",
   "COLLECTIVE": "Collective",
   "START_DATE": "Start Date*",
-  "END_DATE": "End Date*",
+  "END_DATE": "End Date",
   "PERSONAL_EVENT": "Personal Event",
   "SCHEDULE": "Schedule",
   "THEME": "Theme",

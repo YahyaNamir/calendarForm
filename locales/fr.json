@@ -1,9 +1,10 @@
 {
   "ADD_EVENT": "Ajouter un Événement",
+  "EVENT": "Événement",
   "PERSONAL": "Personelle",
   "COLLECTIVE": "Collectif",
   "START_DATE": "Date début*",
-  "END_DATE": "Date fin*",
+  "END_DATE": "Date fin",
   "PERSONAL_EVENT": "Événement Personelle",
   "SCHEDULE": "Planning",
   "THEME": "Thématique",
