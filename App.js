@@ -25,7 +25,7 @@ export default function App() {
             headerStyle: {backgroundColor: '#006536'},
             headerTintColor: '#fff',
             headerTitleStyle: {fontSize: 16, fontFamily: 'Poppins-Bold'},
-            // headerTitleAlign: 'center',
+            headerTitleAlign: 'center',
             headerRight: () => <HeaderRight />,
           }}
         />
