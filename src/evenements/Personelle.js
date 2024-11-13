@@ -177,7 +177,7 @@ export default function Personelle() {
     if (formData.pole === null || formData.planning === null) {
       Alert.alert('Remplir tous les champs!!');
     } else {
-      console.log(JSON.stringify(formData, null, 2));
+      // console.log(JSON.stringify(formData, null, 2));
       Alert.alert('Form Submitted!');
 
       setTimeout(() => {
