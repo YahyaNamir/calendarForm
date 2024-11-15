@@ -181,7 +181,7 @@ export default function Personelle() {
       Alert.alert('Form Submitted!');
 
       setTimeout(() => {
-        // navigation.navigate('Evenement');
+        navigation.navigate('Evenement');
       }, 10);
     }
   };
